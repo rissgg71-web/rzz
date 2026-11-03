@@ -1,3 +1,4 @@
+
 name: Build Android APK
 
 on:
@@ -11,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,7 +28,22 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Build debug APK
+      - name: Validate Android Manifest XML
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+
+          path = "app/src/main/AndroidManifest.xml"
+
+          try:
+              ET.parse(path)
+              print("XML VALID: AndroidManifest.xml")
+          except ET.ParseError as e:
+              print("XML ERROR:", e)
+              raise SystemExit(1)
+          PY
+
+      - name: Build Debug APK
         run: gradle --no-daemon :app:assembleDebug
 
       - name: Upload APK
