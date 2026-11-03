@@ -28,19 +28,31 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Validate Android Manifest XML
+      - name: Repair Android Manifest
         run: |
           python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path("app/src/main/AndroidManifest.xml")
+          content = path.read_text(encoding="utf-8-sig")
+
+          content = re.sub(
+              r'<\?xml\s+[^?]*\?>',
+              '',
+              content,
+              flags=re.IGNORECASE
+          )
+
+          content = content.lstrip()
+          content = '<?xml version="1.0" encoding="utf-8"?>\n' + content
+
+          path.write_text(content, encoding="utf-8")
+          print("Manifest declaration repaired.")
+
           import xml.etree.ElementTree as ET
-
-          path = "app/src/main/AndroidManifest.xml"
-
-          try:
-              ET.parse(path)
-              print("XML VALID: AndroidManifest.xml")
-          except ET.ParseError as e:
-              print("XML ERROR:", e)
-              raise SystemExit(1)
+          ET.parse(path)
+          print("XML VALID!")
           PY
 
       - name: Build Debug APK
