@@ -24,7 +24,6 @@ class MainActivity : Activity() {
         window.navigationBarColor = bgColor
 
         val root = FrameLayout(this)
-
         root.addView(SpaceBackground(this))
 
         val scroll = ScrollView(this)
@@ -92,7 +91,7 @@ class MainActivity : Activity() {
             setHintTextColor(Color.LTGRAY)
             setTextColor(white)
             textSize = 14f
-            singleLine = true
+            isSingleLine = true
             setPadding(14.dp(), 12.dp(), 14.dp(), 12.dp())
             background = rounded(Color.rgb(35, 53, 76), 12)
             setText(prefs.getString("ip", "") ?: "")
@@ -103,7 +102,7 @@ class MainActivity : Activity() {
             setHintTextColor(Color.LTGRAY)
             setTextColor(white)
             textSize = 14f
-            singleLine = true
+            isSingleLine = true
             inputType = 2
             setPadding(14.dp(), 12.dp(), 14.dp(), 12.dp())
             background = rounded(Color.rgb(35, 53, 76), 12)
@@ -219,8 +218,7 @@ class MainActivity : Activity() {
 
         row.addView(icon)
         row.addView(space(14))
-        row.addView(details, LinearLayout.LayoutParams(
-            0, -2, 1f))
+        row.addView(details, LinearLayout.LayoutParams(0, -2, 1f))
         row.addView(badge)
 
         box.addView(row)
@@ -238,8 +236,9 @@ class MainActivity : Activity() {
             this.text = value
             textSize = size
             setTextColor(color)
-            if (bold) typeface =
-                android.graphics.Typeface.DEFAULT_BOLD
+            if (bold) {
+                typeface = android.graphics.Typeface.DEFAULT_BOLD
+            }
         }
         parent.addView(text)
     }
@@ -265,8 +264,7 @@ class MainActivity : Activity() {
 
     private fun space(height: Int): View {
         return View(this).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                1, height.dp())
+            layoutParams = LinearLayout.LayoutParams(1, height.dp())
         }
     }
 
@@ -274,10 +272,10 @@ class MainActivity : Activity() {
         (this * resources.displayMetrics.density).toInt()
 
     // SPACE BACKGROUND
-    class SpaceBackground(context: android.content.Context) :
-        View(context) {
+    class SpaceBackground(context: android.content.Context) : View(context) {
 
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
         private val stars = List(140) { i ->
             val random = java.util.Random(i.toLong() + 123)
             Triple(
@@ -303,10 +301,11 @@ class MainActivity : Activity() {
                 null,
                 Shader.TileMode.CLAMP
             )
+
             canvas.drawRect(0f, 0f, w, h, paint)
             paint.shader = null
 
-            // Distant planet
+            // PLANET
             paint.color = Color.rgb(27, 63, 102)
             canvas.drawCircle(w * 0.83f, h * 0.20f,
                 w * 0.19f, paint)
@@ -315,7 +314,7 @@ class MainActivity : Activity() {
             canvas.drawCircle(w * 0.79f, h * 0.18f,
                 w * 0.16f, paint)
 
-            // Planet ring
+            // PLANET RING
             paint.color = Color.argb(120, 0, 210, 240)
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = 3.dp().toFloat()
@@ -327,16 +326,17 @@ class MainActivity : Activity() {
                 w * 1.08f, h * 0.26f, paint
             )
             canvas.restore()
+
             paint.style = Paint.Style.FILL
 
-            // Stars
+            // STARS
             for ((x, y, size) in stars) {
                 paint.color = Color.argb(
                     100 + (size * 55).toInt().coerceAtMost(155),
                     210, 235, 255
                 )
-                canvas.drawCircle(x * w, y * h,
-                    size, paint)
+
+                canvas.drawCircle(x * w, y * h, size, paint)
             }
         }
 
